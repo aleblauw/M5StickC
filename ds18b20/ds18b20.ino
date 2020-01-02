@@ -9,6 +9,9 @@
 // DS18B20 op pin 26.
 #define ONE_WIRE_BUS 26
 #define TFT_GREY 0x5AEB
+
+#include "config.h"
+
 OneWire oneWire(ONE_WIRE_BUS); 
 DallasTemperature sensors(&oneWire);
 
@@ -47,7 +50,7 @@ void setup() {
   Serial.println();
  
   WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP("<SSID>", "<PASSWORD>");
+  WiFiMulti.addAP(SSID, WIFIPASSWORD);
 
   // wait for WiFi connection
   int timer = 0;
@@ -59,6 +62,7 @@ void setup() {
   if (timer <5){
   Serial.println(" connected");
   M5.Lcd.println(" connected");
+  
   }
   else{
   M5.Lcd.setTextColor(TFT_GREEN,TFT_BLACK);
@@ -72,15 +76,15 @@ void setup() {
 }
 
 void loop() {
+  //io.run();
   delay(2000);
   //M5.Lcd.fillScreen(TFT_GREY);
   sensors.requestTemperatures(); 
   temp = sensors.getTempCByIndex(0);
   Serial.print("Temperature: ");
   Serial.print(temp);
-  Serial.print((char)176);//shows degrees character
-  Serial.print("C  |  ");
-
+  Serial.print(" *C  |  ");
+  
   M5.Lcd.setCursor(0, 0, 2);
   M5.Lcd.setTextColor(TFT_WHITE,TFT_BLACK);
   M5.Lcd.setTextSize(1);
@@ -89,7 +93,7 @@ void loop() {
   M5.Lcd.setTextFont(2);
   M5.Lcd.print("Temperature: ");
   M5.Lcd.println(temp);
-  M5.Lcd.println(" *C ");
+  M5.Lcd.print(" *C ");
   M5.Lcd.setTextColor(TFT_GREEN,TFT_BLACK);
   M5.Lcd.setTextFont(2);
 
@@ -103,14 +107,14 @@ void loop() {
       HTTPClient https;
       
       Serial.print("[HTTPS] begin...\n");
-      https.begin(*client, "<URL>");   // HTTPS
+      https.begin(*client, POST_URL);   // HTTPS
       https.addHeader("Content-Type", "application/x-www-form-urlencoded");
-      https.addHeader("authorization", "Basic <TOKEN>");
+      https.addHeader("authorization", AUTH_TOKEN);
         Serial.print("[HTTPS] POST...\n");
         // start connection and send HTTP header
       temp = String(temp);
       data = "Temperature=" + temp + "&SensorId=M5StickC-2" ;
-      //int httpCode = https.POST("Temperature=22&SensorId=M5StickC-2");
+
       int httpCode = https.POST(data);
   
         // httpCode will be negative on error
@@ -130,13 +134,11 @@ void loop() {
           }
         } else {
           Serial.printf("[HTTPS] POST... failed, error: %s\n", https.errorToString(httpCode).c_str());
-//          M5.Lcd.println("[HTTPS] POST... failed, error: %s\n", https.errorToString(httpCode).c_str());
-           pinMode(M5_LED, OUTPUT);
-           digitalWrite(M5_LED, LOW); //LED ON   
+          pinMode(M5_LED, OUTPUT);
+          digitalWrite(M5_LED, LOW); //LED ON   
         }
   
         https.end();
-    
 
       // End extra scoping block
     }
