@@ -1,7 +1,6 @@
 #include <M5StickC.h>
-#include "M5stickC.h"
 #include <WiFi.h>
-#include <WiFiMulti.h>
+//#include <WiFiMulti.h>
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
 #include <OneWire.h>
@@ -110,36 +109,63 @@ void loop() {
       https.begin(*client, POST_URL);   // HTTPS
       https.addHeader("Content-Type", "application/x-www-form-urlencoded");
       https.addHeader("authorization", AUTH_TOKEN);
-        Serial.print("[HTTPS] POST...\n");
-        // start connection and send HTTP header
+      Serial.print("[HTTPS] POST...\n");
       temp = String(temp);
       data = "Temperature=" + temp + "&SensorId=M5StickC-2" ;
 
       int httpCode = https.POST(data);
   
-        // httpCode will be negative on error
-        if (httpCode > 0) {
-          // HTTP header has been send and Server response header has been handled
-          Serial.printf("[HTTPS] POST... code: %d\n", httpCode);
-          String response = https.getString();
-          Serial.println(httpCode);
+      if (httpCode > 0) {
+        // HTTP header has been send and Server response header has been handled
+        Serial.printf("[HTTPS] POST... code: %d\n", httpCode);
+        String response = https.getString();
+        Serial.println(httpCode);
+        Serial.println(response);
+        // file found at server
+        if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+          
+          M5.Lcd.setTextColor(TFT_GREEN,TFT_BLACK);
+          M5.Lcd.setTextFont(2);
           Serial.println(response);
-          // file found at server
-          if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
-            
-            M5.Lcd.setTextColor(TFT_GREEN,TFT_BLACK);
-            M5.Lcd.setTextFont(2);
-            Serial.println(response);
-            M5.Lcd.println(httpCode);
-          }
-        } else {
-          Serial.printf("[HTTPS] POST... failed, error: %s\n", https.errorToString(httpCode).c_str());
+          M5.Lcd.println(httpCode);
           pinMode(M5_LED, OUTPUT);
-          digitalWrite(M5_LED, LOW); //LED ON   
+          digitalWrite(M5_LED, HIGH); //LED OFF
         }
+      } else {
+        Serial.printf("[HTTPS] POST... failed, error: %s\n", https.errorToString(httpCode).c_str());
+        pinMode(M5_LED, OUTPUT);
+        digitalWrite(M5_LED, LOW); //LED ON   
+      }
   
-        https.end();
-
+      https.end();
+  
+      https.begin(*client, POST_URL_ADAFRUIT);
+  
+      https.addHeader(ADAFRUIT_HEADER);
+      https.addHeader(ADAFRUIT_HEADER2);
+      Serial.print("[HTTPS] POST to adafruit...\n");
+      // start connection and send HTTP header
+      data = "value=" + temp;     
+      httpCode = https.POST(data);
+      if (httpCode > 0) {
+        Serial.printf("[HTTPS] POST ADAFruit... code: %d\n", httpCode);
+        String response = https.getString();
+        if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+          M5.Lcd.setTextColor(TFT_GREEN,TFT_BLACK);
+          M5.Lcd.setTextFont(2);
+          Serial.println(response);
+          M5.Lcd.println(httpCode);
+          pinMode(M5_LED, OUTPUT);
+          digitalWrite(M5_LED, HIGH); //LED OFF
+        }
+      } else {
+        Serial.printf("[HTTPS] POST to Adafruit... failed, error: %s\n", https.errorToString(httpCode).c_str());
+        pinMode(M5_LED, OUTPUT);
+        digitalWrite(M5_LED, LOW); //LED ON   
+      }
+  
+      https.end();
+        
       // End extra scoping block
     }
   
