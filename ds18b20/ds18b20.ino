@@ -1,6 +1,6 @@
 #include <M5StickC.h>
 #include <WiFi.h>
-//#include <WiFiMulti.h>
+#include <WiFiMulti.h>
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
 #include <OneWire.h>
