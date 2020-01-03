@@ -2,7 +2,7 @@
 #define WIFIPASSWORD "password"
 
 #define POST_URL "URL"
-#define AUTH_TOKEN "Token"
+#define AUTH_TOKEN "TOKEN"
 
 #define POST_URL_ADAFRUIT "https://io.adafruit.com/api/v2/<USERNAME>/feeds/<FEEDNAME>/data"
 #define ADAFRUIT_HEADER "X-AIO-Key", "<AIO_KEY>" 
