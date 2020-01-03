@@ -15,7 +15,8 @@ OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
 String data;
-String temp ;
+String temp;
+String temp_previous;
 
 void setClock() {
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
@@ -75,10 +76,9 @@ void setup() {
 }
 
 void loop() {
-  //io.run();
   delay(2000);
-  //M5.Lcd.fillScreen(TFT_GREY);
-  sensors.requestTemperatures(); 
+  sensors.requestTemperatures();
+  temp_previous = temp;
   temp = sensors.getTempCByIndex(0);
   Serial.print("Temperature: ");
   Serial.print(temp);
@@ -110,9 +110,17 @@ void loop() {
       https.addHeader("Content-Type", "application/x-www-form-urlencoded");
       https.addHeader("authorization", AUTH_TOKEN);
       Serial.print("[HTTPS] POST...\n");
+      if (temp.toInt() > 0){
+        data = "Temperature=" + temp + "&SensorId=M5StickC-2" ;
+        Serial.println("Used current Temperature");
+      } else {
+        temp = temp_previous;
+        data = "Temperature=" + temp + "&SensorId=M5StickC-2" ;
+        M5.Lcd.println("Used previous");
+        Serial.println("Used previous temperature");
+      }
       temp = String(temp);
-      data = "Temperature=" + temp + "&SensorId=M5StickC-2" ;
-
+    
       int httpCode = https.POST(data);
   
       if (httpCode > 0) {
