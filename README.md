@@ -30,3 +30,11 @@ You will need that in the config.h file
 This is the M5StickC with the DHT22 temperature and humidity sensor. Replace URL, TOKEN, SSID and matching password
 
 Same as DS18B20 but also with Humidity. No breaboard needed.
+
+#### TODO
+
+* Make function for HTTPS Post
+* Make feed for Heat index DHT22
+~~* Use previous value if temperature not between boundaries~~
+* Make sure that value is between boundaries
+
