@@ -35,6 +35,6 @@ Same as DS18B20 but also with Humidity. No breaboard needed.
 
 * Make function for HTTPS Post
 * Make feed for Heat index DHT22
-~~* Use previous value if temperature not between boundaries~~
+* ~~ Use previous value if temperature not between boundaries~~
 * Make sure that value is between boundaries
 
