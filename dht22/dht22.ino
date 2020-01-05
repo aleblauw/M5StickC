@@ -165,7 +165,7 @@ void loop() {
 
       https.end();
 
-      https.begin(*client, POST_URL_ADAFRUIT);
+      https.begin(*client, POST_URL_ADAFRUIT_TEMP);
   
       https.addHeader(ADAFRUIT_HEADER);
       https.addHeader(ADAFRUIT_HEADER2);
@@ -192,7 +192,7 @@ void loop() {
   
       https.end();
 
-  https.begin(*client, POST_URL_ADAFRUIT2);
+      https.begin(*client, POST_URL_ADAFRUIT_HUM);
   
       https.addHeader(ADAFRUIT_HEADER);
       https.addHeader(ADAFRUIT_HEADER2);
@@ -218,6 +218,34 @@ void loop() {
       }
   
       https.end();
+
+      https.begin(*client, POST_URL_ADAFRUIT_HEAT);
+  
+      https.addHeader(ADAFRUIT_HEADER);
+      https.addHeader(ADAFRUIT_HEADER2);
+      Serial.print("[HTTPS] POST to adafruit...\n");
+      // start connection and send HTTP header
+      data = "value=" + hum;     
+      httpCode = https.POST(data);
+      if (httpCode > 0) {
+        Serial.printf("[HTTPS] POST ADAFruit... code: %d\n", httpCode);
+        String response = https.getString();
+        if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+          M5.Lcd.setTextColor(TFT_GREEN,TFT_BLACK);
+          M5.Lcd.setTextFont(2);
+          Serial.println(response);
+          M5.Lcd.println(httpCode);
+          pinMode(M5_LED, OUTPUT);
+          digitalWrite(M5_LED, HIGH); //LED OFF
+        }
+      } else {
+        Serial.printf("[HTTPS] POST to Adafruit... failed, error: %s\n", https.errorToString(httpCode).c_str());
+        pinMode(M5_LED, OUTPUT);
+        digitalWrite(M5_LED, LOW); //LED ON   
+      }
+  
+      https.end();
+
 
       // End extra scoping block
     }
