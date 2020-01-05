@@ -25,6 +25,6 @@ When no connection can be made with the SSID the LED will go on. Also when the h
 
 Note the API Url:
 
-API	https://io.adafruit.com/api/v2/USERNAEM/feeds/FEEDNAME
+API	https://io.adafruit.com/api/v2/USERNAME/feeds/FEEDNAME
 
 You will need that in the config.h file
