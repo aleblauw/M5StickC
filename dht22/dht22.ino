@@ -126,7 +126,8 @@ void loop() {
     {
       // Add a scoping block for HTTPClient https to make sure it is destroyed before WiFiClientSecure *client is 
       HTTPClient https;
-  
+      temp = String(t);
+      hum = String(h);
       Serial.print("[HTTPS] begin...\n");
       https.begin(*client, POST_URL);   // HTTPS
       https.addHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -141,9 +142,7 @@ void loop() {
         M5.Lcd.println("Used previous");
         Serial.println("Used previous temperature");
       }
-      temp = String(t);
-      hum = String(h);
-      
+            
       int httpCode = https.POST(data);
   
       if (httpCode > 0) {
