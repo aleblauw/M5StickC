@@ -106,6 +106,8 @@ void loop() {
       HTTPClient https;
       
       Serial.print("[HTTPS] begin...\n");
+      
+      // BEGIN Block internal use      
       https.begin(*client, POST_URL);   // HTTPS
       https.addHeader("Content-Type", "application/x-www-form-urlencoded");
       https.addHeader("authorization", AUTH_TOKEN);
@@ -146,6 +148,8 @@ void loop() {
       }
   
       https.end();
+      
+      // END Block internal use
   
       https.begin(*client, POST_URL_ADAFRUIT);
   
