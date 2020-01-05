@@ -1,24 +1,21 @@
 #include <M5StickC.h>
-#include "M5stickC.h"
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
-// Added include DHT.h
 #include "DHT.h"
 #define DHTPIN 26 // what pin we're connected to
 #define DHTTYPE DHT22 // DHT 22 (AM2302)
-// Added include DHT.h end
 #define TFT_GREY 0x5AEB
+
+#include "config.h"
 
 String data;
 String temp ,hum;
+String temp_previous;
 
 DHT dht(DHTPIN, DHTTYPE);
 
-
-// Not sure if WiFiClientSecure checks the validity date of the certificate. 
-// Setting clock just to be sure...
 void setClock() {
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
 
@@ -45,21 +42,19 @@ void setup() {
   M5.begin();
   Serial.begin(9600);
  // Serial.setDebugOutput(true);
- // Added DHT begin
   M5.Lcd.setRotation(3);
   Serial.println("DHTxx test!");
   dht.begin();
- // Added DHT end
   Serial.println();
   Serial.println();
   Serial.println();
 
-  int timer = 0;
   WiFi.mode(WIFI_STA);
   WiFiMulti.addAP("<SSID>", "<PASSWORD>");
 
   // wait for WiFi connection
-//  Serial.print("Waiting for WiFi to connect...");
+  int timer = 0;
+  Serial.print("Waiting for WiFi to connect...");
 while ((WiFiMulti.run() != WL_CONNECTED) and timer <5) {
     Serial.print(timer);
     timer++;
@@ -81,15 +76,10 @@ while ((WiFiMulti.run() != WL_CONNECTED) and timer <5) {
 
 void loop() {
   delay(2000);
-  M5.Lcd.fillScreen(TFT_GREY);
-  
-  // Reading temperature or humidity takes about 250 milliseconds!
-  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
   float h = dht.readHumidity();
-  // Read temperature as Celsius
   float t = dht.readTemperature();
-  // Read temperature as Fahrenheit
   float f = dht.readTemperature(true);
+
   // Check if any reads failed and exit early (to try again).
   if (isnan(h) || isnan(t) || isnan(f)) {
   Serial.println("Failed to read from DHT sensor!");
@@ -101,8 +91,6 @@ void loop() {
   M5.Lcd.setCursor(0, 0, 2);
   M5.Lcd.setTextColor(TFT_WHITE,TFT_BLACK);
   M5.Lcd.setTextSize(1);
-  // Compute heat index
-  // Must send in temp in Fahrenheit!
   float hi = dht.computeHeatIndex(f, h);
   M5.Lcd.println("");
 
@@ -131,8 +119,6 @@ void loop() {
   // Display temp, hum and heatindex
 
   WiFiClientSecure *client = new WiFiClientSecure;
-
-
   
   if(client) {
     //client -> setCACert(rootCACertificate);
@@ -146,34 +132,40 @@ void loop() {
       https.addHeader("Content-Type", "application/x-www-form-urlencoded");
       https.addHeader("authorization", "Basic <TOKEN>");
         Serial.print("[HTTPS] POST...\n");
-        // start connection and send HTTP header
+      if (temp.toInt() > 0){
+        data = "Temperature=" + temp + "&Humidity=" + hum + "&SensorId=M5StickC" ;
+        Serial.println("Used current Temperature");
+      } else {
+        temp = temp_previous;
+        data = "Temperature=" + temp + "&Humidity=" + hum + "&SensorId=M5StickC" ;
+        M5.Lcd.println("Used previous");
+        Serial.println("Used previous temperature");
+      }
       temp = String(t);
       hum = String(h);
-      data = "Temperature=" + temp + "&Humidity=" + hum + "&SensorId=M5StickC" ;
-      //int httpCode = https.POST("Humidity=" + h + "&Temperature=22&SensorId=M5StickC");
+      
       int httpCode = https.POST(data);
   
-        // httpCode will be negative on error
-        if (httpCode > 0) {
-          // HTTP header has been send and Server response header has been handled
-          Serial.printf("[HTTPS] POST... code: %d\n", httpCode);
-          String response = https.getString();
-          Serial.println(httpCode);
+      if (httpCode > 0) {
+        // HTTP header has been send and Server response header has been handled
+        Serial.printf("[HTTPS] POST... code: %d\n", httpCode);
+        String response = https.getString();
+        Serial.println(httpCode);
+        Serial.println(response);
+        // file found at server
+        if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+          
+          M5.Lcd.setTextColor(TFT_YELLOW,TFT_BLACK);
+          M5.Lcd.setTextFont(2);
           Serial.println(response);
-          // file found at server
-          if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
-            
-            M5.Lcd.setTextColor(TFT_YELLOW,TFT_BLACK);
-            M5.Lcd.setTextFont(2);
-            Serial.println(response);
-            M5.Lcd.println(httpCode);
-          }
-        } else {
-          Serial.printf("[HTTPS] POST... failed, error: %s\n", https.errorToString(httpCode).c_str());
+          M5.Lcd.println(httpCode);
         }
+      } else {
+        Serial.printf("[HTTPS] POST... failed, error: %s\n", https.errorToString(httpCode).c_str());
+      }
+
+      https.end();
   
-        https.end();
-    
 
       // End extra scoping block
     }
