@@ -115,7 +115,9 @@ void loop() {
   Serial.print("Heat index: ");
   Serial.print(hi);
   Serial.println(" *F");
-
+  temp = String(t);
+  hum = String(h);
+  hi = String(hi);
   // Display temp, hum and heatindex
 
   WiFiClientSecure *client = new WiFiClientSecure;
@@ -126,8 +128,7 @@ void loop() {
     {
       // Add a scoping block for HTTPClient https to make sure it is destroyed before WiFiClientSecure *client is 
       HTTPClient https;
-      temp = String(t);
-      hum = String(h);
+
       Serial.print("[HTTPS] begin...\n");
       https.begin(*client, POST_URL);   // HTTPS
       https.addHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -225,6 +226,7 @@ void loop() {
       https.addHeader(ADAFRUIT_HEADER2);
       Serial.print("[HTTPS] POST to adafruit...\n");
       // start connection and send HTTP header
+      
       data = "value=" + hum;     
       httpCode = https.POST(data);
       if (httpCode > 0) {
