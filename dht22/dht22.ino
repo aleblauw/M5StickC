@@ -50,7 +50,7 @@ void setup() {
   Serial.println();
 
   WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP("<SSID>", "<PASSWORD>");
+  WiFiMulti.addAP(SSID, WIFIPASSWORD);
 
   // wait for WiFi connection
   int timer = 0;
@@ -128,9 +128,9 @@ void loop() {
       HTTPClient https;
   
       Serial.print("[HTTPS] begin...\n");
-      https.begin(*client, "<URL>");   // HTTPS
+      https.begin(*client, POST_URL);   // HTTPS
       https.addHeader("Content-Type", "application/x-www-form-urlencoded");
-      https.addHeader("authorization", "Basic <TOKEN>");
+      https.addHeader("authorization", AUTH_TOKEN);
         Serial.print("[HTTPS] POST...\n");
       if (temp.toInt() > 0){
         data = "Temperature=" + temp + "&Humidity=" + hum + "&SensorId=M5StickC" ;
