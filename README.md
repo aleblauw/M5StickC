@@ -21,5 +21,5 @@ When no connection can be made with the SSID the LED will go on. Also when the h
 
 1. Make an account at io.adfruit.com
 
-![](pics/adafruit.png)
+![](pics/adafruit.jpg)
 
