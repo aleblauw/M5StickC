@@ -17,4 +17,9 @@ For correct functioning of the sketch use only the Adafruit section of the post.
 
 #### Explanation
 
+When no connection can be made with the SSID the LED will go on. Also when the http post fails the LED will be tuned on. The following steps have o be made:
+
+1. Make an account at io.adfruit.com
+
+![](pics/adafruit.png)
 
