@@ -19,7 +19,10 @@ For correct functioning of the sketch use only the Adafruit section of the post.
 
 When no connection can be made with the SSID the LED will go on. Also when the http post fails the LED will be tuned on. The following steps have o be made:
 
-1. Make an account at io.adfruit.com and create a feed
+1. Make an account at io.adfruit.com, create a feed and click on feed info
 
 ![](pics/adafruit.jpg)
 
+Note the API Url
+API	https://io.adafruit.com/api/v2/<USERNAME>/feeds/<FEEDNAME>
+You will need that in the config.h file
