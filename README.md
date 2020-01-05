@@ -13,4 +13,8 @@ This is the M5StickC with the DS18B20 temperature sensor. Replace URL, TOKEN, SS
 
 In the picture you see the M5StickC, DS18B20, resistor of 4.7kΩ, cables and a breadboard.
 
-For correct functioning of the sketch use only the Adafruit section of the post. The first http post section is used for a project which uses a specific web service.
+For correct functioning of the sketch use only the Adafruit section of the post. The first http post section is used for a project which uses a specific web service. Delete everything between // BEGIN Block internal use AND // END Block internal use.
+
+#### Explanation
+
+
