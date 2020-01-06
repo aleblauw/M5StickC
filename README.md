@@ -25,6 +25,10 @@ API	https://io.adafruit.com/api/v2/USERNAME/feeds/FEEDNAME
 
 You will need that in the config.h file
 
+After cretaing the feed and sending data, you can create a dashboard like this:
+
+![](pics/dashboard.jpg)
+
 ### DHT22
 
 This is the M5StickC with the DHT22 temperature and humidity sensor. Replace URL, TOKEN, SSID and matching password
