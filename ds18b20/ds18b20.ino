@@ -76,7 +76,6 @@ void setup() {
 }
 
 void loop() {
-  delay(2000);
   sensors.requestTemperatures();
   temp_previous = temp;
   temp = sensors.getTempCByIndex(0);
@@ -188,8 +187,8 @@ void loop() {
 
   Serial.println();
   Serial.println("Waiting 10s before the next round...");
-  M5.Lcd.setTextColor(TFT_BLUE,TFT_BLACK);
-  M5.Lcd.setTextFont(2);
-  M5.Lcd.print("Waiting 10s before the next round...");
+  //M5.Lcd.setTextColor(TFT_BLUE,TFT_BLACK);
+  //M5.Lcd.setTextFont(2);
+  //M5.Lcd.print("Waiting 10s before the next round...");
   delay(10000);
 }
